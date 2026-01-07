@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Visit Taniti — Activities</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+
+  <!-- Single-file router + activity detail population -->
+  <script defer>
+    (() => {
+      "use strict";
+
+      const ACTIVITY_DATA = {
+        "act-snorkel": {
+          title: "Lagoon Snorkel Adventure",
+          sub: "Guided snorkeling near Taniti City / Yellow Leaf Bay.",
+          img: { src: "snorkel.jpg", alt: "Snorkelers exploring coral reefs in crystal-clear lagoon waters" },
+          pills: { duration: "Duration: ~3 hours", price: "Price: $$", meet: "Meet: Harbor", location: "Location: Yellow Leaf Bay" },
+          overview: "Enjoy a guided snorkeling experience near Taniti City. (Placeholder content for prototype.)",
+          itinerary: { title: "Lagoon Snorkel", meta: "~3 hours • Yellow Leaf Bay" }
+        },
+        "act-zip": {
+          title: "Rainforest Zip-lining",
+          sub: "Adventure activity in the lush rainforest canopy.",
+          img: { src: "zipline.jpg", alt: "Person zip-lining above lush rainforest in Taniti" },
+          pills: { duration: "Duration: Half-day", price: "Price: $$", meet: "Meet: Zipline Base", location: "Location: Rainforest" },
+          overview: "Soar above the canopy on a guided zip-lining route. (Placeholder content for prototype.)",
+          itinerary: { title: "Rainforest Zip-lining", meta: "Half-day • Rainforest" }
+        },
+        "act-volcano": {
+          title: "Volcano Hike",
+          sub: "Explore the mountainous interior and active volcano views.",
+          img: { src: "volcano.jpg", alt: "Hikers walking toward a volcanic mountain through lush greenery on Taniti" },
+          pills: { duration: "Duration: Full-day", price: "Price: $$", meet: "Meet: Trailhead", location: "Location: Volcano" },
+          overview: "A full-day guided hike with scenic volcanic views. (Placeholder content for prototype.)",
+          itinerary: { title: "Volcano Hike", meta: "Full-day • Mountain interior" }
+        },
+        "act-museum": {
+          title: "Museum & Art Galleries",
+          sub: "Local history museum and nearby galleries in Taniti City.",
+          img: { src: "museum.jpg", alt: "Interior of a Taniti museum featuring traditional artifacts and cultural displays" },
+          pills: { duration: "Duration: 2–3 hours", price: "Price: $", meet: "Meet: Museum Lobby", location: "Location: Taniti City" },
+          overview: "Explore Taniti history and rotating local art exhibits. (Placeholder content for prototype.)",
+          itinerary: { title: "Museum & Art Galleries", meta: "2–3 hours • Taniti City" }
+        }
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      function show(el, isShown) {
+        if (!el) return;
+        el.hidden = !isShown;
+      }
+
+      function populateDetail(activityId) {
+        const a = ACTIVITY_DATA[activityId] || ACTIVITY_DATA["act-snorkel"];
+
+        document.title = `Visit Taniti — ${a.title}`;
+
+        const titleEl = $("activityTitle");
+        const subEl = $("activitySub");
+        const overviewEl = $("activityOverview");
+        const imgEl = $("activityImage");
+
+        const pillDuration = $("pillDuration");
+        const pillPrice = $("pillPrice");
+        const pillMeet = $("pillMeet");
+        const pillLocation = $("pillLocation");
+
+        const addBtn = $("detailAddBtn");
+        const bookLink = $("detailBookLink");
+
+        if (titleEl) titleEl.textContent = a.title;
+        if (subEl) subEl.textContent = a.sub;
+        if (overviewEl) overviewEl.textContent = a.overview;
+
+        if (imgEl) {
+          imgEl.src = a.img.src;
+          imgEl.alt = a.img.alt;
+        }
+
+        if (pillDuration) pillDuration.textContent = a.pills.duration;
+        if (pillPrice) pillPrice.textContent = a.pills.price;
+        if (pillMeet) pillMeet.textContent = a.pills.meet;
+        if (pillLocation) pillLocation.textContent = a.pills.location;
+
+        // Ensure app.js "Add to Itinerary" wiring works (it listens for [data-add-id])
+        if (addBtn) {
+          addBtn.dataset.addId = activityId;
+          addBtn.dataset.addType = "Activity";
+          addBtn.dataset.addTitle = a.itinerary.title;
+          addBtn.dataset.addMeta = a.itinerary.meta;
+        }
+
+        // Optional: pass context into plan-book.html
+        if (bookLink) {
+          bookLink.href = `plan-book.html?option=Activities&id=${encodeURIComponent(activityId)}`;
+        }
+      }
+
+      function route() {
+        const params = new URLSearchParams(window.location.search);
+        const activityId = params.get("id"); // act-snorkel | act-zip | act-volcano | act-museum
+
+        const listView = $("activitiesListView");
+        const detailView = $("activityDetailView");
+
+        const isDetail = Boolean(activityId);
+
+        show(listView, !isDetail);
+        show(detailView, isDetail);
+
+        if (isDetail) {
+          populateDetail(activityId);
+          window.scrollTo({ top: 0, behavior: "auto" });
+        } else {
+          document.title = "Visit Taniti — Activities";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const backLink = $("detailBackLink");
+        if (backLink) {
+          backLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            history.pushState({}, "", "activities.html");
+            route();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        }
+
+        window.addEventListener("popstate", route);
+        route();
+      });
+    })();
+  </script>
+</head>
+
+<body data-page="activities">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html" aria-label="Visit Taniti Home">
+        <span>Visit</span><span class="accent">Taniti</span>
+      </a>
+
+      <nav class="nav" aria-label="Primary">
+        <a data-nav="home" href="index.html">Home</a>
+        <a data-nav="activities" href="activities.html">Activities</a>
+        <a data-nav="stay" href="stay.html">Stay</a>
+        <a data-nav="eat" href="eat-drink.html">Eat &amp; Drink</a>
+        <a data-nav="around" href="getting-around.html">Getting Around</a>
+        <a data-nav="plan" href="plan-book.html">Plan &amp; Book</a>
+        <a data-nav="info" href="travel-info.html">Travel Info</a>
+        <a data-nav="about" href="about.html">About</a>
+        <a data-nav="contact" href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ================================
+         LIST VIEW
+         ================================ -->
+    <div id="activitiesListView">
+      <section class="card" aria-labelledby="activities-title">
+        <h1 id="activities-title" class="h1">Activities</h1>
+        <p class="sub">Browse popular things to do. View details, add to itinerary, or go to Plan &amp; Book.</p>
+
+        <div class="row" style="margin-top:10px;" role="group" aria-label="Activity filters">
+          <button type="button" class="pill pill-btn" id="filterCategory">Category: All</button>
+          <button type="button" class="pill pill-btn" id="filterDuration">Duration: All</button>
+          <button type="button" class="pill pill-btn" id="filterFamily">Family: Any</button>
+          <button type="button" class="pill pill-btn" id="filterLocation">Location: All</button>
+          <button type="button" class="pill pill-btn pill-btn-reset" id="filterReset">Reset</button>
+        </div>
+      </section>
+
+      <section class="grid cols2" style="margin-top:14px;" aria-label="Activity list">
+        <!-- Activity 1 -->
+        <article class="card"
+          data-activity
+          data-category="Adventure"
+          data-duration="Short"
+          data-family="Yes"
+          data-location="Yellow Leaf Bay">
+
+          <div class="card-image">
+            <img src="snorkel.jpg" alt="Snorkelers swimming over a coral reef in clear ocean water near Taniti">
+          </div>
+
+          <h2 class="h3" style="margin:0 0 6px;font-weight:800;">Lagoon Snorkel</h2>
+          <p class="small">Guided snorkeling near Taniti City / Yellow Leaf Bay.</p>
+
+          <div class="hr" aria-hidden="true"></div>
+
+          <div class="row">
+            <a class="btn tertiary" href="activities.html?id=act-snorkel">View Details</a>
+
+            <button class="btn utility"
+              type="button"
+              data-add-id="act-snorkel"
+              data-add-type="Activity"
+              data-add-title="Lagoon Snorkel"
+              data-add-meta="~3 hours • Yellow Leaf Bay">
+              Add to Itinerary
+            </button>
+
+            <a class="btn book" href="plan-book.html">Book</a>
+          </div>
+        </article>
+
+        <!-- Activity 2 -->
+        <article class="card"
+          data-activity
+          data-category="Adventure"
+          data-duration="Half-day"
+          data-family="No"
+          data-location="Rainforest">
+
+          <div class="card-image">
+            <img src="zipline.jpg" alt="Person zip-lining above lush rainforest in Taniti">
+          </div>
+
+          <h2 class="h3" style="margin:0 0 6px;font-weight:800;">Rainforest Zip-lining</h2>
+          <p class="small">Adventure activity in the lush rainforest canopy.</p>
+
+          <div class="hr" aria-hidden="true"></div>
+
+          <div class="row">
+            <a class="btn tertiary" href="activities.html?id=act-zip">View Details</a>
+
+            <button class="btn utility"
+              type="button"
+              data-add-id="act-zip"
+              data-add-type="Activity"
+              data-add-title="Rainforest Zip-lining"
+              data-add-meta="Half-day • Rainforest">
+              Add to Itinerary
+            </button>
+
+            <a class="btn book" href="plan-book.html">Book</a>
+          </div>
+        </article>
+
+        <!-- Activity 3 -->
+        <article class="card"
+          data-activity
+          data-category="Adventure"
+          data-duration="Full-day"
+          data-family="No"
+          data-location="Volcano">
+
+          <div class="card-image">
+            <img src="volcano.jpg" alt="Hikers walking toward a volcanic mountain through lush greenery on Taniti">
+          </div>
+
+          <h2 class="h3" style="margin:0 0 6px;font-weight:800;">Volcano Hike</h2>
+          <p class="small">Explore the mountainous interior and active volcano views.</p>
+
+          <div class="hr" aria-hidden="true"></div>
+
+          <div class="row">
+            <a class="btn tertiary" href="activities.html?id=act-volcano">View Details</a>
+
+            <button class="btn utility"
+              type="button"
+              data-add-id="act-volcano"
+              data-add-type="Activity"
+              data-add-title="Volcano Hike"
+              data-add-meta="Full-day • Mountain interior">
+              Add to Itinerary
+            </button>
+
+            <a class="btn book" href="plan-book.html">Book</a>
+          </div>
+        </article>
+
+        <!-- Activity 4 -->
+        <article class="card"
+          data-activity
+          data-category="Culture"
+          data-duration="Short"
+          data-family="Yes"
+          data-location="Taniti City">
+
+          <div class="card-image">
+            <img src="museum.jpg" alt="Interior of a Taniti museum featuring traditional artifacts and cultural displays">
+          </div>
+
+          <h2 class="h3" style="margin:0 0 6px;font-weight:800;">Museum &amp; Art Galleries</h2>
+          <p class="small">Local history museum and nearby galleries in Taniti City.</p>
+
+          <div class="hr" aria-hidden="true"></div>
+
+          <div class="row">
+            <a class="btn tertiary" href="activities.html?id=act-museum">View Details</a>
+
+            <button class="btn utility"
+              type="button"
+              data-add-id="act-museum"
+              data-add-type="Activity"
+              data-add-title="Museum &amp; Art Galleries"
+              data-add-meta="2–3 hours • Taniti City">
+              Add to Itinerary
+            </button>
+
+            <a class="btn book" href="plan-book.html">Book</a>
+          </div>
+        </article>
+      </section>
+
+      <p class="footer-note">Main prototype flow: Activities → View Details → Book Now → Plan &amp; Book.</p>
+    </div>
+
+    <!-- ================================
+         DETAIL VIEW (same file)
+         ================================ -->
+    <div id="activityDetailView" hidden>
+      <article class="card" aria-labelledby="activityTitle">
+        <div class="card-image" style="height:260px;">
+          <img id="activityImage" src="" alt="">
+        </div>
+
+        <div class="row" style="justify-content:space-between; align-items:flex-start;">
+          <h1 id="activityTitle" class="h1" style="margin:0;"></h1>
+          <a id="detailBackLink" class="pill" href="activities.html" aria-label="Back to Activities">← Back to Activities</a>
+        </div>
+
+        <p id="activitySub" class="sub"></p>
+
+        <div class="row" role="list" aria-label="Key details">
+          <span id="pillDuration" class="pill" role="listitem"></span>
+          <span id="pillPrice" class="pill" role="listitem"></span>
+          <span id="pillMeet" class="pill" role="listitem"></span>
+          <span id="pillLocation" class="pill" role="listitem"></span>
+        </div>
+
+        <div class="hr" aria-hidden="true"></div>
+
+        <h2 class="h3" style="margin:0 0 8px; font-weight:800;">Overview</h2>
+        <p id="activityOverview" class="small"></p>
+
+        <div class="hr" aria-hidden="true"></div>
+
+        <div class="row">
+          <a id="detailBookLink" class="btn primary" href="plan-book.html">Book Now</a>
+
+          <button
+            id="detailAddBtn"
+            class="btn ghost"
+            type="button"
+            data-add-id=""
+            data-add-type="Activity"
+            data-add-title=""
+            data-add-meta="">
+            Add to Itinerary
+          </button>
+
+          <a class="btn ghost" href="travel-info.html">Travel Info</a>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <a class="itinerary" href="itinerary.html" aria-label="Open itinerary">
+    Itinerary (<span data-itinerary-count>0</span>)
+  </a>
+</body>
+</html>

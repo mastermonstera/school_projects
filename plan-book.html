@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Visit Taniti — Plan &amp; Book</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+</head>
+
+<body data-page="plan">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html" aria-label="Visit Taniti Home">
+        <span>Visit</span><span class="accent">Taniti</span>
+      </a>
+
+      <nav class="nav" aria-label="Primary">
+        <a data-nav="home" href="index.html">Home</a>
+        <a data-nav="activities" href="activities.html">Activities</a>
+        <a data-nav="stay" href="stay.html">Stay</a>
+        <a data-nav="eat" href="eat-drink.html">Eat &amp; Drink</a>
+        <a data-nav="around" href="getting-around.html">Getting Around</a>
+        <a data-nav="plan" href="plan-book.html">Plan &amp; Book</a>
+        <a data-nav="info" href="travel-info.html">Travel Info</a>
+        <a data-nav="about" href="about.html">About</a>
+        <a data-nav="contact" href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" aria-labelledby="plan-title">
+      <h1 id="plan-title" class="h1">Plan &amp; Book</h1>
+      <p class="sub">Prototype booking hub: select an option → choose a date → continue.</p>
+
+      <div class="row" style="margin-top:10px;" role="group" aria-label="Booking options">
+        <button type="button" class="pill pill-btn" id="planActivities">Activities</button>
+        <button type="button" class="pill pill-btn" id="planLodging">Lodging</button>
+        <button type="button" class="pill pill-btn" id="planTransport">Transport</button>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px;" aria-labelledby="step-1-title">
+      <h2 id="step-1-title" class="h2" style="margin:0 0 10px;font-weight:900;">1) Select Date / Option</h2>
+
+      <div class="row" style="align-items:flex-end;">
+        <div style="min-width:220px;">
+          <label class="small" for="planDate" style="display:block;margin-bottom:6px;">Date</label>
+          <input
+            id="planDate"
+            name="planDate"
+            type="date"
+            style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);font:inherit;">
+        </div>
+
+        <div style="flex:1;min-width:220px;">
+          <div class="small" style="margin-bottom:6px;">Selected Option</div>
+          <div class="pill" id="planOptionDisplay">Activities</div>
+        </div>
+
+        <button type="button" class="btn primary" id="planContinue" disabled>
+          Continue
+        </button>
+      </div>
+
+      <div class="hr" aria-hidden="true"></div>
+
+      <p class="small" id="planHelper">
+        Pick an option above, then choose a date to continue.
+      </p>
+    </section>
+
+    <section class="card" style="margin-top:14px;" aria-labelledby="step-2-title">
+      <h2 id="step-2-title" class="h2" style="margin:0 0 10px;font-weight:900;">2) Enter Details</h2>
+      <p class="small">Prototype fields (not connected to real booking).</p>
+
+      <div class="grid cols2" style="margin-top:12px;">
+        <div>
+          <label class="small" for="planName" style="display:block;margin-bottom:6px;">Name</label>
+          <input
+            id="planName"
+            name="planName"
+            type="text"
+            placeholder="Your name"
+            autocomplete="name"
+            style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);font:inherit;">
+        </div>
+
+        <div>
+          <label class="small" for="planEmail" style="display:block;margin-bottom:6px;">Email</label>
+          <input
+            id="planEmail"
+            name="planEmail"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            style="width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);font:inherit;">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px;">
+        <button type="button" class="btn secondary" id="planSaveDraft">Save Draft</button>
+        <button type="button" class="btn book" id="planSubmit">Submit Request</button>
+      </div>
+
+      <p class="small" style="margin-top:10px;" id="planStatus" aria-live="polite"></p>
+    </section>
+
+    <p class="footer-note">Low-fi prototype for coursework. Replace copy with official Taniti content.</p>
+  </main>
+
+  <a class="itinerary" href="itinerary.html" aria-label="Open itinerary">
+    Itinerary (<span data-itinerary-count>0</span>)
+  </a>
+</body>
+</html>
